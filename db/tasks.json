@@ -1,0 +1,22 @@
+[
+  {
+    "id": "1",
+    "title": "Buy groceries",
+    "completed": false
+  },
+  {
+    "id": "2",
+    "title": "Do laundry",
+    "completed": false
+  },
+  {
+    "id": "3",
+    "title": "Finish project",
+    "completed": true
+  },
+  {
+    "title": "Buy car",
+    "completed": false,
+    "id": "d36ffd2f-97dd-4048-95d5-f5cc3fd2f61e"
+  }
+]
