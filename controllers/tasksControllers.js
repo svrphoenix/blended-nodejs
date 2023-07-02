@@ -1,4 +1,10 @@
-const { getTasksService, getOneTaskService, addTaskService } = require('../services/taskServices');
+const {
+  getTasksService,
+  getOneTaskService,
+  addTaskService,
+  updateTaskService,
+  deleteTaskService,
+} = require('../services/taskServices');
 
 const getTasks = async (_, res, next) => {
   try {
@@ -28,4 +34,26 @@ const addTask = async (req, res, next) => {
   }
 };
 
-module.exports = { getTasks, getTaskById, addTask };
+const updateTask = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const task = await updateTaskService(id, req.body);
+    res.json(task);
+  } catch (error) {
+    res.status(error.statusCode).json({ message: error.message });
+  }
+};
+
+const deleteTask = async (req, res, next) => {
+  const { id } = req.params;
+  console.log(req.params);
+  try {
+    const task = await deleteTaskService(id);
+    res.status(200).json(task);
+  } catch (error) {
+    console.log(error);
+    res.status(error.statusCode).json({ message: error.message });
+  }
+};
+
+module.exports = { getTasks, getTaskById, addTask, updateTask, deleteTask };

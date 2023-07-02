@@ -19,12 +19,36 @@ const getOneTaskService = async id => {
   return task;
 };
 
-const addTaskService = async task => {
+const addTaskService = async body => {
   const tasks = await getTasksService();
-  const newTask = { ...task, id: crypto.randomUUID() };
+  const newTask = { id: crypto.randomUUID(), ...body };
   tasks.push(newTask);
   await fs.writeFile(tasksPath, JSON.stringify(tasks, null, 2));
   return newTask;
 };
 
-module.exports = { getTasksService, getOneTaskService, addTaskService };
+const updateTaskService = async (id, body) => {
+  const tasks = await getTasksService();
+  const index = tasks.findIndex(item => item.id === id);
+  if (index === -1) {
+    throw new HttpError(404, 'Task not found');
+  }
+  tasks[index] = { ...tasks[index], ...body };
+
+  await fs.writeFile(tasksPath, JSON.stringify(tasks, null, 2));
+  return tasks[index];
+};
+
+const deleteTaskService = async id => {
+  const tasks = await getTasksService();
+  const index = tasks.findIndex(item => item.id === id);
+  if (index === -1) {
+    throw new HttpError(404, 'Task not found');
+  }
+
+  const [deletedTask] = tasks.splice(index, 1);
+  await fs.writeFile(tasksPath, JSON.stringify(tasks, null, 2));
+  return deletedTask;
+};
+
+module.exports = { getTasksService, getOneTaskService, addTaskService, updateTaskService,deleteTaskService };
