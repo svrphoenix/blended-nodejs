@@ -1,4 +1,6 @@
 const express = require('express');
+const { validateBody } = require("../helpers/validateBody");
+const { createTaskValidationSchema, updateTaskValidationSchema } = require("../helpers/validation/taskValidationSchemas");
 const {
   getTasks,
   getTaskById,
@@ -9,8 +11,8 @@ const {
 
 const router = express.Router();
 
-router.route('/').get(getTasks).post(addTask);
-router.route('/:id').get(getTaskById).patch(updateTask).delete(deleteTask);
+router.route('/').get(getTasks).post(validateBody(createTaskValidationSchema),addTask);
+router.route('/:id').get(getTaskById).patch(validateBody(updateTaskValidationSchema),updateTask).delete(deleteTask);
 // router.get('/:id', getTaskById);
 
 // router.post('/', addTask);

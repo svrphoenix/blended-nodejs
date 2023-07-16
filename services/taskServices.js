@@ -2,17 +2,17 @@ const fs = require('fs/promises');
 const path = require('path');
 const HttpError = require('../helpers/HttpError');
 const crypto = require('crypto');
+const { Task } = require('../models/Task');
 
 const tasksPath = path.join(__dirname, '..', 'db', 'tasks.json');
 
 const getTasksService = async () => {
-  const tasks = await fs.readFile(tasksPath);
-  return JSON.parse(tasks);
+  return await Task.find();
+  
 };
 
-const getOneTaskService = async id => {
-  const tasks = await getTasksService();
-  const task = tasks.find(item => item.id === id);
+const getOneTaskService = async (id) => {
+  const task = await Task.findById(id);
   if (!task) {
     throw new HttpError(404, 'Task not found');
   }
@@ -20,35 +20,24 @@ const getOneTaskService = async id => {
 };
 
 const addTaskService = async body => {
-  const tasks = await getTasksService();
-  const newTask = { id: crypto.randomUUID(), ...body };
-  tasks.push(newTask);
-  await fs.writeFile(tasksPath, JSON.stringify(tasks, null, 2));
-  return newTask;
+  return await Task.create(body);
 };
 
 const updateTaskService = async (id, body) => {
-  const tasks = await getTasksService();
-  const index = tasks.findIndex(item => item.id === id);
-  if (index === -1) {
-    throw new HttpError(404, 'Task not found');
+  const updatedTask = await Task.findByIdAndUpdate(id, body, { new: true });
+  if (!updatedTask) {
+    throw new HttpError(404, "Task not found");
   }
-  tasks[index] = { ...tasks[index], ...body };
-
-  await fs.writeFile(tasksPath, JSON.stringify(tasks, null, 2));
-  return tasks[index];
+  return updatedTask;
 };
 
 const deleteTaskService = async id => {
-  const tasks = await getTasksService();
-  const index = tasks.findIndex(item => item.id === id);
-  if (index === -1) {
-    throw new HttpError(404, 'Task not found');
+  const deletedTask = await Task.findByIdAndDelete(id);
+  if (!deletedTask) {
+    throw new HttpError(404, "Task not found");
   }
-
-  const [deletedTask] = tasks.splice(index, 1);
-  await fs.writeFile(tasksPath, JSON.stringify(tasks, null, 2));
   return deletedTask;
-};
+}
+
 
 module.exports = { getTasksService, getOneTaskService, addTaskService, updateTaskService,deleteTaskService };
