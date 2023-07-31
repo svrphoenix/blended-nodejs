@@ -8,9 +8,11 @@ const {
   updateTask,
   deleteTask,
 } = require('../controllers/tasksControllers');
+const { auth } = require("../middlewares/auth");
 
 const router = express.Router();
 
+router.use(auth);
 router.route('/').get(getTasks).post(validateBody(createTaskValidationSchema),addTask);
 router.route('/:id').get(getTaskById).patch(validateBody(updateTaskValidationSchema),updateTask).delete(deleteTask);
 // router.get('/:id', getTaskById);

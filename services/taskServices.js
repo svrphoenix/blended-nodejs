@@ -1,10 +1,6 @@
-const fs = require('fs/promises');
-const path = require('path');
 const HttpError = require('../helpers/HttpError');
-const crypto = require('crypto');
 const { Task } = require('../models/Task');
 
-const tasksPath = path.join(__dirname, '..', 'db', 'tasks.json');
 
 const getTasksService = async () => {
   return await Task.find();
